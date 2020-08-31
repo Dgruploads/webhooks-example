@@ -42,5 +42,12 @@ pipeline {
 				sh "docker push dgruploads/declarative-pipeline-image"
 			}
 		}
+		
+		stage ("8. Pull the image jenkins") {
+			steps {
+				sh "docker pull jenkins"
+				sh "docker pull wordpress"
+			}
+		}
 	}
 }
