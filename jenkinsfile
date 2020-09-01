@@ -15,19 +15,19 @@ pipeline {
 
 		stage ("3. Build the image") {
 			steps {
-				sh "docker build -t declarative-pipeline-image /home/ec2-user/"
+				sh "docker build -t declarative-pipeline-image-feature-branch /home/ec2-user/"
 			}
 		}
 
 		stage ("4. Run the container") {
 			steps {
-				sh "docker run -dit -p 9191:80 --name declarative-pipeline-container declarative-pipeline-image"
+				sh "docker run -dit -p 9191:80 --name declarative-pipeline-container-feature-branch declarative-pipeline-image-feature-branch"
 			}
 		}
 
 		stage ("5. Tag the container") {
 			steps {
-				sh "docker tag declarative-pipeline-image dgruploads/declarative-pipeline-image"
+				sh "docker tag declarative-pipeline-image-feature-branch dgruploads/declarative-pipeline-image-feature-branch"
 			}
 		}
 
@@ -39,7 +39,7 @@ pipeline {
 
 		stage ("7. Push the image to docker hub") {
 			steps {
-				sh "docker push dgruploads/declarative-pipeline-image"
+				sh "docker push dgruploads/declarative-pipeline-image-feature-branch"
 			}
 		}
 		
