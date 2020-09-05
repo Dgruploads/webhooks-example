@@ -1,53 +1,28 @@
 pipeline {
 	agent any
 	stages {
-		stage ("1. 1. Install docker package") {
+		stage ("1. Install docker package") {
 			steps {
 				sh "yum install docker -y"
 			}
 		}
-
-		stage ("2. Start the docker service.") {
+		stage ("2. Start the docker service") {
 			steps {
 				sh "service docker start"
 			}
 		}
 
-		stage ("3. Build the image") {
+		stage ("3. Build the docker image") {
 			steps {
-				sh "docker build -t declarative-pipeline-image /home/ec2-user/"
+				sh "docker build -t $image /home/ec2-user/"
 			}
 		}
-
-		stage ("4. Run the container") {
+		stage ("4. Run the container.") {
 			steps {
-				sh "docker run -dit -p 9191:80 --name declarative-pipeline-container declarative-pipeline-image"
-			}
-		}
-
-		stage ("5. Tag the container") {
-			steps {
-				sh "docker tag declarative-pipeline-image dgruploads/declarative-pipeline-image"
-			}
-		}
-
-		stage ("6. login to the docker hub") {
-			steps {
-				sh "docker login -u dgruploads -p 9886360651Dd"
-			}
-		}
-
-		stage ("7. Push the image to docker hub") {
-			steps {
-				sh "docker push dgruploads/declarative-pipeline-image"
-			}
-		}
-		
-		stage ("8. Pull the image jenkins") {
-			steps {
-				sh "docker pull jenkins"
-				sh "docker pull wordpress"
+				sh "docker run -dit -p 8181:80 --name $container $image"
 			}
 		}
 	}
 }
+
+
