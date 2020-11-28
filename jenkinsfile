@@ -1,28 +1,52 @@
 pipeline {
-	agent any
+	agent any 
 	stages {
-		stage ("1. Install docker package") {
+		stage ("1. Install docker") {
 			steps {
-				sh "yum install docker -y"
-			}
-		}
-		stage ("2. Start the docker service") {
-			steps {
-				sh "service docker start"
+				sh "sudo yum install docker -y"	
 			}
 		}
 
-		stage ("3. Build the docker image") {
+		stage ("2. Start the docker service") {
 			steps {
-				sh "docker build -t $image /home/ec2-user/"
+				sh "sudo service docker start"
 			}
 		}
-		stage ("4. Run the container.") {
+
+		stage ("3. Clone the repo") {
 			steps {
-				sh "docker run -dit -p 8181:80 --name $container $image"
+				sh "git clone https://github.com/Dgruploads/webhooks-example.git"
+			}
+		}
+
+		stage ("4. Build the image") {
+			steps {
+				sh "sudo docker build -t $image_name webhooks-example/"
+			}
+		}
+
+		stage ("5. Run the container") {
+			steps {
+				sh "sudo docker run -dit -p 8181:80 --name $container_name $image_name"
+			}
+		}
+
+		stage ("6. Tag the image") {
+			steps {
+				sh "sudo docker image tag $image_name dgruploads/$image_name"
+			}
+		}
+
+		stage ("7. Login to docker hub") {
+			steps {
+				sh "sudo docker login -u $user_name -p $password"
+			}
+		}
+
+		stage ("8. Push the image") {
+			steps {
+				sh "sudo docker push dgruploads/$image_name"
 			}
 		}
 	}
 }
-
-
